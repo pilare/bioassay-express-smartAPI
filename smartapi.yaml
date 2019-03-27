@@ -66,9 +66,8 @@ components:
         assayID:
           type: string
           x-responseValueType:
-            - x-path: ncbigene.id
-              x-valueType:
-                - uri: http://identifiers.org/ncbigene
+            x-path: 'ncbigene.id'
+            x-valueType: 'http://identifiers.org/ncbigene'
         uniqueID:
           type: string
         text:
