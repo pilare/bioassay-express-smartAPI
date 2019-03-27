@@ -1,0 +1,158 @@
+openapi: 3.0.0
+info:
+  title: CDD BioAssay Express
+  version: 1.0.0
+paths:
+  '/GetAssay':
+    get:
+      x-controller-name: Assays
+      x-operation-name: GetAssay
+      description: Return Assay information
+      tags:
+        - Assays
+      responses:
+        '200':
+          description: Assay model instance
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/Assay'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters:
+        - name: assayID
+          in: query
+          schema:
+            type: number
+          required: true
+servers:
+  - url: 'https://www.bioassayexpress.com/REST/'
+components:
+  schemas:
+    Assay:
+      title: Assay
+      properties:
+        assayID:
+          type: string
+        uniqueID:
+          type: string
+        text:
+          type: string
+        notes:
+          type: string
+        schemaURI:
+          type: string
+        annotations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Annotation'
+        pubchemXRef:
+          type: array
+          items:
+            $ref: '#/components/schemas/pubchemXRef'
+        curationTime:
+          type: number
+        curatorID:
+          type: string
+        history:
+          type: array
+          items:
+            $ref: '#/components/schemas/Event'
+        holdingIDList:
+          type: array
+      required:
+        - id
+    pubchemXRef:
+      title: pubchemXRef
+      properties:
+        type:
+          type: string
+        id:
+          type: string
+        comment:
+          type: string
+    Annotation:
+      title: Annotation
+      properties:
+        propURI:
+          type: string
+        propLabel:
+          type: string
+        propAbbrev:
+          type: string
+        valueURI:
+          type: string
+        valueLabel:
+          type: string
+        valueAbbrev:
+          type: string
+        valueDescr:
+          type: string
+        groupNest:
+          type: array
+        groupLabel:
+          type: array
+        valueHier:
+          type: array
+          items:
+            type: string
+        labelHier: 
+          type: array
+          items:
+            type: string
+        outOfSchema:
+          type: boolean
+    Event:
+      title: History event
+      properties:
+        curationTime:
+          type: number
+        curatorID:
+          type: string
+        annotsAdded:
+          type: array
+          items:
+            $ref: '#/components/schemas/Annotation'
+        annotsRemoved:
+          type: array
+          items:
+            $ref: '#/components/schemas/Annotation'
+        labelsAdded:
+          type: array
+          items:
+            $ref: '#/components/schemas/Label'
+        labelsRemoved:
+          type: array
+          items:
+            $ref: '#/components/schemas/Label'
+        notesModified:
+          type: object
+    Label:
+      title: Label
+      properties:
+        propURI:
+          type: string
+        valueLabel:
+          type: string
+        propAbbrev:
+          type: string
+        propLabel:
+          type: string
+    Error:
+      required:
+        - code
+        - message
+      properties:
+        status:
+          type: integer
+          format: int32
+        userMessage:
+          type: string
+        developerMessage:
+          type: string
