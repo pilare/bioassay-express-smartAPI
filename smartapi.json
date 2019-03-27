@@ -4,18 +4,20 @@
     "title": "CDD BioAssay Express",
     "version": "1.0.0",
     "contact": {
-      "email": "support@collaborativedrug.com",
       "name": "BioAssay Express",
+      "email": "support@collaborativedrug.com",
       "url": "https://www.bioassayexpress.com",
-      "x-id": "Collaborative Drug Discovery",
-      "x-role": "responsible organization"
+      "x-id": "https://www.collaborativedrug.com/",
+      "x-role": "BioAssay Express Support"
     },
-    "description": "Documentation of the CDD BioAssay Express API.",
     "termsOfService": "https://www.bioassayexpress.com/docs/license.jsp"
   },
   "servers": [
     {
-      "url": "https://www.bioassayexpress.com/REST/"
+      "url": "https://www.bioassayexpress.com/REST/",
+      "description": "BioExpress server",
+      "x-location": "Burlingame, California, USA",
+      "x-maturity": "production"
     }
   ],
   "paths": {
@@ -23,8 +25,15 @@
       "get": {
         "x-controller-name": "Assays",
         "x-operation-name": "GetAssay",
-        "description": "Return BioAssay information with full annotation",
         "summary": "Get BioAssay information",
+        "description": "Return BioAssay information with full annotation",
+        "operationId": "getBAEassay",
+        "x-accessRestriction": "limited",
+        "externalDocs": {
+          "url": "https://www.bioassayexpress.com/docs/",
+          "x-type": "publication",
+          "x-description": "The BioAssay Express is a web-based tool for annotating bioassay protocols using semantic web terms."
+        },
         "tags": [
           "Assays"
         ],
@@ -65,11 +74,13 @@
             "name": "assayID",
             "description": "Assay Identifier. Example: 101",
             "in": "query",
+            "required": true,
             "schema": {
               "type": "number",
               "example": 101
             },
-            "required": true
+            "x-parameterType": "bae.id",
+            "x-valueType": "http://identifiers.org/bioassay.bae"
           }
         ]
       }
@@ -81,7 +92,13 @@
         "title": "Assay",
         "properties": {
           "assayID": {
-            "type": "string"
+            "type": "string",
+            "x-responseValueType": [
+              {
+                "x-path": "ncbigene.id",
+                "x-valueType": "http://identifiers.org/ncbigene"
+              }
+            ]
           },
           "uniqueID": {
             "type": "string"
