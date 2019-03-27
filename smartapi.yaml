@@ -56,8 +56,8 @@ paths:
           schema:
             type: number
             example: 101
-          x-parameterType: bae.id
-          x-valueType: http://identifiers.org/bioassay.bae
+          x-parameterType: 'bae.id'
+          x-valueType: 'http://identifiers.org/bioassay.bae'
 components:
   schemas:
     Assay:
