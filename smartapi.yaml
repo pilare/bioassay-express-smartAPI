@@ -1,0 +1,179 @@
+openapi: 3.0.0
+info:
+  title: CDD BioAssay Express
+  version: 1.0.0
+  contact:
+    email: support@collaborativedrug.com
+    name: BioAssay Express
+    url: https://www.bioassayexpress.com
+    x-id: Collaborative Drug Discovery
+    x-role: responsible organization
+  description: Documentation of the CDD BioAssay Express API.
+  termsOfService: https://www.bioassayexpress.com/docs/license.jsp 
+servers:
+  - url: 'https://www.bioassayexpress.com/REST/'  
+paths:
+  /GetAssay:
+    get:
+      x-controller-name: Assays
+      x-operation-name: GetAssay
+      description: Return BioAssay information with full annotation
+      summary: Get BioAssay information
+      tags:
+        - Assays
+      responses:
+        '200':
+          description: Assay model instance
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Assay'
+        '400':
+          description: Unable to find assayID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters:
+        - name: assayID
+          description: 'Assay Identifier. Example: 101'
+          in: query
+          schema:
+            type: number
+            example: 101
+          required: true
+components:
+  schemas:
+    Assay:
+      title: Assay
+      properties:
+        assayID:
+          type: string
+        uniqueID:
+          type: string
+        text:
+          type: string
+        notes:
+          type: string
+        schemaURI:
+          type: string
+        annotations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Annotation'
+        pubchemXRef:
+          type: array
+          items:
+            $ref: '#/components/schemas/pubchemXRef'
+        curationTime:
+          type: number
+        curatorID:
+          type: string
+        history:
+          type: array
+          items:
+            $ref: '#/components/schemas/Event'
+        holdingIDList:
+          type: array
+          items:
+            type: string
+      required:
+        - assayID
+    pubchemXRef:
+      title: pubchemXRef
+      properties:
+        type:
+          type: string
+        id:
+          type: string
+        comment:
+          type: string
+    Annotation:
+      title: Annotation
+      properties:
+        propURI:
+          type: string
+        propLabel:
+          type: string
+        propAbbrev:
+          type: string
+        valueURI:
+          type: string
+        valueLabel:
+          type: string
+        valueAbbrev:
+          type: string
+        valueDescr:
+          type: string
+        groupNest:
+          type: array
+          items:
+            type: string
+        groupLabel:
+          type: array
+          items:
+            type: string
+        valueHier:
+          type: array
+          items:
+            type: string
+        labelHier: 
+          type: array
+          items:
+            type: string
+        outOfSchema:
+          type: boolean
+    Event:
+      title: History event
+      properties:
+        curationTime:
+          type: number
+        curatorID:
+          type: string
+        annotsAdded:
+          type: array
+          items:
+            $ref: '#/components/schemas/Annotation'
+        annotsRemoved:
+          type: array
+          items:
+            $ref: '#/components/schemas/Annotation'
+        labelsAdded:
+          type: array
+          items:
+            $ref: '#/components/schemas/Label'
+        labelsRemoved:
+          type: array
+          items:
+            $ref: '#/components/schemas/Label'
+        notesModified:
+          type: object
+    Label:
+      title: Label
+      properties:
+        propURI:
+          type: string
+        valueLabel:
+          type: string
+        propAbbrev:
+          type: string
+        propLabel:
+          type: string
+    Error:
+      required:
+        - status
+        - userMessage
+      properties:
+        status:
+          type: integer
+          format: int32
+        userMessage:
+          type: string
+        developerMessage:
+          type: string
