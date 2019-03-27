@@ -7,7 +7,7 @@ info:
     email: support@collaborativedrug.com
     url: https://www.bioassayexpress.com
     x-id: https://www.collaborativedrug.com/
-    x-role: BioAssay Express Support
+    x-role: responsible organization
   termsOfService: https://www.bioassayexpress.com/docs/license.jsp 
 servers:
   - url: 'https://www.bioassayexpress.com/REST/'
