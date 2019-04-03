@@ -101,6 +101,53 @@ paths:
       x-accessRestriction: limited
       x-controller-name: Assays
       x-operation-name: ListCuratedAssays
+  /KeywordMatch:
+    post:
+      description: Return BioAssay matched by keywords
+      operationId: getBAEassaysByKeyword
+      requestBody:
+        description: A JSON object containing assay keywords
+        content:
+          application/json:
+            schema:
+              properties:
+                keywords:
+                  type: string
+                schemaURI:
+                  type: string
+                annotations:
+                  items:
+                    type: string
+                  type: array
+                select:
+                  type: string
+              required:
+              - keywords
+              - annotations
+              example:
+                keywords: enzyme
+                schemaURI: http://www.bioassayontology.org/bas#
+                annotations: []
+                select: null
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Terms'
+          description: Assay model instance
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: unexpected error
+      summary: Get BioAssays matching by keyword
+      tags:
+      - Terms
+      x-accessRestriction: limited
+      x-controller-name: Terms
+      x-operation-name: KeywordMatch
 components:
   schemas:
     Annotation:
@@ -191,6 +238,32 @@ components:
             type: number
           type: array
       title: AssaysList
+    Terms:
+      properties:
+        terms:
+          items:
+            $ref: '#/components/schemas/Term'
+          type: array
+      title: Terms
+    Term:
+      properties:
+        propURI:
+          type: string
+        propLabel:
+          type: string
+        valueURI:
+          type: string
+        valueLabel:
+          type: string
+        groupNest:
+          items:
+            type: string
+          type: array
+        groupLabel:
+          items:
+            type: string
+          type: array
+      title: Term
     Error:
       properties:
         developerMessage:
