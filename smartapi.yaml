@@ -8,7 +8,7 @@ info:
     x-role: responsible organization
   termsOfService: https://www.bioassayexpress.com/docs/license.jsp
   title: CDD BioAssay Express
-  version: 1.0.1
+  version: 1.0.2
 servers:
 - description: BioExpress server
   url: https://www.bioassayexpress.com/REST/
@@ -148,6 +148,52 @@ paths:
       x-accessRestriction: limited
       x-controller-name: Terms
       x-operation-name: KeywordMatch
+  /GetPropertyList:
+    post:
+      description: Returns list of terms for specified ontology
+      operationId: getBAEpropertyList
+      requestBody:
+        description: A JSON object containing assay keywords
+        content:
+          application/json:
+            schema:
+              properties:
+                propURI:
+                  type: string
+                schemaURI:
+                  type: string
+                schemaBranches:
+                  type: string
+                groupNest:
+                  items:
+                    type: string
+                  type: array
+              required:
+              - propURI
+              example:
+                propURI: http://www.bioassayontology.org/bao#BAO_0002854
+                schemaURI: http://www.bioassayontology.org/bas#
+                groupNest: []
+                schemaBranches: null
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PropertyList'
+          description: Term model instances
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: unexpected error
+      summary: Get ontology properties
+      tags:
+      - Terms
+      x-accessRestriction: limited
+      x-controller-name: Terms
+      x-operation-name: GetPropertyList
 components:
   schemas:
     Annotation:
@@ -300,7 +346,7 @@ components:
           type: array
         notesModified:
           type: object
-      title: History event
+      title: Event
     Label:
       properties:
         propAbbrev:
@@ -312,6 +358,26 @@ components:
         valueLabel:
           type: string
       title: Label
+    Property:
+      properties:
+        uri:
+          type: string
+        name:
+          type: string
+        abbrev:
+          type: string
+        inSchema:
+          type: boolean
+        inModel:
+          type: boolean
+      title: Property
+    PropertyList:
+      properties:
+        list:
+          items:
+            $ref: '#/components/schemas/Property'
+          type: array
+      title: PropertyList
     pubchemXRef:
       properties:
         comment:
