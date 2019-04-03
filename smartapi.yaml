@@ -1,193 +1,250 @@
 openapi: 3.0.0
 info:
-  title: CDD BioAssay Express
-  version: 1.0.0
   contact:
-    name: BioAssay Express
     email: support@collaborativedrug.com
+    name: BioAssay Express
     url: https://www.bioassayexpress.com
     x-id: https://www.collaborativedrug.com/
     x-role: responsible organization
-  termsOfService: https://www.bioassayexpress.com/docs/license.jsp 
+  termsOfService: https://www.bioassayexpress.com/docs/license.jsp
+  title: CDD BioAssay Express
+  version: 1.0.0
 servers:
-  - url: 'https://www.bioassayexpress.com/REST/'
-    description: 'BioExpress server'
-    x-location: 'Burlingame, California, USA'
-    x-maturity: 'production'
+- description: BioExpress server
+  url: https://www.bioassayexpress.com/REST/
+  x-location: Burlingame, California, USA
+  x-maturity: production
 paths:
   /GetAssay:
     get:
-      x-controller-name: Assays
-      x-operation-name: GetAssay
-      summary: Get BioAssay information
       description: Return BioAssay information with full annotation
-      operationId: getBAEassay
-      x-accessRestriction: limited
       externalDocs:
-        url: 'https://www.bioassayexpress.com/docs/'
+        url: https://www.bioassayexpress.com/docs/
+        x-description: The BioAssay Express is a web-based tool for annotating bioassay
+          protocols using semantic web terms.
         x-type: publication
-        x-description: "The BioAssay Express is a web-based tool for annotating bioassay protocols using semantic web terms."
-      tags:
-        - Assays
+      operationId: getBAEassay
+      parameters:
+      - description: 'Assay Identifier. Example: 101'
+        in: query
+        name: assayID
+        required: true
+        schema:
+          example: 101
+          type: number
+        x-parameterValueType:
+          x-parameterType: bae.id
+          x-valueType: http://identifiers.org/bioassay.bae
       responses:
         '200':
-          description: Assay model instance
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Assay'
+          description: Assay model instance
         '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
           description: Unable to find assayID
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
         default:
-          description: unexpected error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+          description: unexpected error
+      summary: Get BioAssay information
+      tags:
+      - Assays
+      x-accessRestriction: limited
+      x-controller-name: Assays
+      x-operation-name: GetAssay
+  /ListCuratedAssays:
+    get:
+      description: Return the list of currated assays in BioAssay Express
+      externalDocs:
+        url: https://www.bioassayexpress.com/docs/
+        x-description: The BioAssay Express is a web-based tool for annotating bioassay
+          protocols using semantic web terms.
+        x-type: publication
+      operationId: getBAEcurratedAssaysList
       parameters:
-        - name: assayID
-          description: 'Assay Identifier. Example: 101'
-          in: query
-          required: true
+        - in: query
+          name: anomaly
+          description: Sort order
           schema:
-            type: number
-            example: 101
-          x-parameterValueType:
-            x-parameterType: 'bae.id'
-            x-valueType: 'http://identifiers.org/bioassay.bae'
+            type: string
+            enum: [blank, outschema]
+        - in: query
+          name: order
+          description: Sort order
+          schema:
+            type: string
+            enum: [ascending, descending]
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssaysList'
+          description: Assay model instance
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: unexpected error
+      summary: Get List of curated BioAssays
+      tags:
+      - Assays
+      x-accessRestriction: limited
+      x-controller-name: Assays
+      x-operation-name: ListCuratedAssays
 components:
   schemas:
-    Assay:
-      title: Assay
+    Annotation:
       properties:
-        assayID:
-          type: number
-          x-responseValueType:
-            x-path: 'ncbigene.id'
-            x-valueType: 'http://identifiers.org/ncbigene'
-        uniqueID:
-          type: string
-        text:
-          type: string
-        notes:
-          type: string
-        schemaURI:
-          type: string
-        annotations:
-          type: array
-          items:
-            $ref: '#/components/schemas/Annotation'
-        pubchemXRef:
-          type: array
-          items:
-            $ref: '#/components/schemas/pubchemXRef'
-        curationTime:
-          type: number
-        curatorID:
-          type: string
-        history:
-          type: array
-          items:
-            $ref: '#/components/schemas/Event'
-        holdingIDList:
-          type: array
+        groupLabel:
           items:
             type: string
-      required:
-        - assayID
-    pubchemXRef:
-      title: pubchemXRef
-      properties:
-        type:
-          type: string
-        id:
-          type: string
-        comment:
-          type: string
-    Annotation:
-      title: Annotation
-      properties:
-        propURI:
+          type: array
+        groupNest:
+          items:
+            type: string
+          type: array
+        labelHier:
+          items:
+            type: string
+          type: array
+        outOfSchema:
+          type: boolean
+        propAbbrev:
           type: string
         propLabel:
           type: string
-        propAbbrev:
-          type: string
-        valueURI:
-          type: string
-        valueLabel:
+        propURI:
           type: string
         valueAbbrev:
           type: string
         valueDescr:
           type: string
-        groupNest:
-          type: array
-          items:
-            type: string
-        groupLabel:
-          type: array
-          items:
-            type: string
         valueHier:
-          type: array
           items:
             type: string
-        labelHier: 
           type: array
-          items:
-            type: string
-        outOfSchema:
-          type: boolean
-    Event:
-      title: History event
+        valueLabel:
+          type: string
+        valueURI:
+          type: string
+      title: Annotation
+    Assay:
       properties:
+        annotations:
+          items:
+            $ref: '#/components/schemas/Annotation'
+          type: array
+        assayID:
+          type: number
+          x-responseValueType:
+            x-path: ncbigene.id
+            x-valueType: http://identifiers.org/ncbigene
         curationTime:
           type: number
         curatorID:
           type: string
+        history:
+          items:
+            $ref: '#/components/schemas/Event'
+          type: array
+        holdingIDList:
+          items:
+            type: string
+          type: array
+        notes:
+          type: string
+        pubchemXRef:
+          items:
+            $ref: '#/components/schemas/pubchemXRef'
+          type: array
+        schemaURI:
+          type: string
+        text:
+          type: string
+        uniqueID:
+          type: string
+      required:
+      - assayID
+      title: Assay
+    AssaysList:
+      properties:
+        assayIDList:
+          items:
+            type: number
+          type: array
+        uniqueIDList:
+          items:
+            type: string
+          type: array
+        curationTime:
+          items:
+            type: number
+          type: array
+      title: AssaysList
+    Error:
+      properties:
+        developerMessage:
+          type: string
+        status:
+          format: int32
+          type: integer
+        userMessage:
+          type: string
+      required:
+      - status
+      - userMessage
+    Event:
+      properties:
         annotsAdded:
-          type: array
           items:
             $ref: '#/components/schemas/Annotation'
+          type: array
         annotsRemoved:
-          type: array
           items:
             $ref: '#/components/schemas/Annotation'
+          type: array
+        curationTime:
+          type: number
+        curatorID:
+          type: string
         labelsAdded:
-          type: array
           items:
             $ref: '#/components/schemas/Label'
+          type: array
         labelsRemoved:
-          type: array
           items:
             $ref: '#/components/schemas/Label'
+          type: array
         notesModified:
           type: object
+      title: History event
     Label:
-      title: Label
       properties:
-        propURI:
-          type: string
-        valueLabel:
-          type: string
         propAbbrev:
           type: string
         propLabel:
           type: string
-    Error:
-      required:
-        - status
-        - userMessage
+        propURI:
+          type: string
+        valueLabel:
+          type: string
+      title: Label
+    pubchemXRef:
       properties:
-        status:
-          type: integer
-          format: int32
-        userMessage:
+        comment:
           type: string
-        developerMessage:
+        id:
           type: string
+        type:
+          type: string
+      title: pubchemXRef
