@@ -103,7 +103,7 @@ paths:
       x-operation-name: ListCuratedAssays
   /KeywordMatch:
     post:
-      description: Return BioAssay matched by keywords
+      description: Return assay terms matched by keywords
       operationId: getBAEassaysByKeyword
       requestBody:
         description: A JSON object containing assay keywords
@@ -135,14 +135,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Terms'
-          description: Assay model instance
+          description: Term model instances
         default:
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
           description: unexpected error
-      summary: Get BioAssays matching by keyword
+      summary: Get assay terms matched by keywords
       tags:
       - Terms
       x-accessRestriction: limited
