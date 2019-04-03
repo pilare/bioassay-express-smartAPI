@@ -8,7 +8,7 @@ info:
     x-role: responsible organization
   termsOfService: https://www.bioassayexpress.com/docs/license.jsp
   title: CDD BioAssay Express
-  version: 1.0.0
+  version: 1.0.1
 servers:
 - description: BioExpress server
   url: https://www.bioassayexpress.com/REST/
