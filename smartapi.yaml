@@ -8,7 +8,7 @@ info:
     x-role: responsible organization
   termsOfService: https://www.bioassayexpress.com/docs/license.jsp
   title: CDD BioAssay Express
-  version: 1.0.2
+  version: 1.0.3
 servers:
 - description: BioExpress server
   url: https://www.bioassayexpress.com/REST/
@@ -60,121 +60,33 @@ paths:
       x-accessRestriction: limited
       x-controller-name: Assays
       x-operation-name: GetAssay
-  /ListCuratedAssays:
-    get:
-      description: Return the list of currated assays in BioAssay Express
-      externalDocs:
-        url: https://www.bioassayexpress.com/docs/
-        x-description: The BioAssay Express is a web-based tool for annotating bioassay
-          protocols using semantic web terms.
-        x-type: publication
-      operationId: getBAEcurratedAssaysList
-      parameters:
-        - in: query
-          name: anomaly
-          description: Sort order
-          schema:
-            type: string
-            enum: [blank, outschema]
-        - in: query
-          name: order
-          description: Sort order
-          schema:
-            type: string
-            enum: [ascending, descending]
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AssaysList'
-          description: Assay model instance
-        default:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: unexpected error
-      summary: Get List of curated BioAssays
-      tags:
-      - Assays
-      x-accessRestriction: limited
-      x-controller-name: Assays
-      x-operation-name: ListCuratedAssays
-  /KeywordMatch:
-    post:
-      description: Return assay terms matched by keywords
-      operationId: getBAEassaysByKeyword
-      requestBody:
-        description: A JSON object containing assay keywords
-        content:
-          application/json:
-            schema:
-              properties:
-                keywords:
-                  type: string
-                schemaURI:
-                  type: string
-                annotations:
-                  items:
-                    type: string
-                  type: array
-                select:
-                  type: string
-              required:
-              - keywords
-              - annotations
-              example:
-                keywords: enzyme
-                schemaURI: http://www.bioassayontology.org/bas#
-                annotations: []
-                select: null
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Terms'
-          description: Term model instances
-        default:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: unexpected error
-      summary: Get assay terms matched by keywords
-      tags:
-      - Terms
-      x-accessRestriction: limited
-      x-controller-name: Terms
-      x-operation-name: KeywordMatch
   /GetPropertyList:
     post:
       description: Returns list of terms for specified ontology
       operationId: getBAEpropertyList
       requestBody:
-        description: A JSON object containing assay keywords
         content:
           application/json:
             schema:
+              example:
+                groupNest: []
+                propURI: http://www.bioassayontology.org/bao#BAO_0002854
+                schemaBranches: null
+                schemaURI: http://www.bioassayontology.org/bas#
               properties:
-                propURI:
-                  type: string
-                schemaURI:
-                  type: string
-                schemaBranches:
-                  type: string
                 groupNest:
                   items:
                     type: string
                   type: array
+                propURI:
+                  type: string
+                schemaBranches:
+                  type: string
+                schemaURI:
+                  type: string
               required:
               - propURI
-              example:
-                propURI: http://www.bioassayontology.org/bao#BAO_0002854
-                schemaURI: http://www.bioassayontology.org/bas#
-                groupNest: []
-                schemaBranches: null
+        description: A JSON object containing assay keywords
       responses:
         '200':
           content:
@@ -194,6 +106,132 @@ paths:
       x-accessRestriction: limited
       x-controller-name: Terms
       x-operation-name: GetPropertyList
+  /KeywordMatch:
+    post:
+      description: Return assay terms matched by keywords
+      operationId: getBAEassaysByKeyword
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                annotations: []
+                keywords: enzyme
+                schemaURI: http://www.bioassayontology.org/bas#
+                select: null
+              properties:
+                annotations:
+                  items:
+                    type: string
+                  type: array
+                keywords:
+                  type: string
+                schemaURI:
+                  type: string
+                select:
+                  type: string
+              required:
+              - keywords
+              - annotations
+        description: A JSON object containing assay keywords
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Terms'
+          description: Term model instances
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: unexpected error
+      summary: Get assay terms matched by keywords
+      tags:
+      - Terms
+      x-accessRestriction: limited
+      x-controller-name: Terms
+      x-operation-name: KeywordMatch
+  /ListCuratedAssays:
+    get:
+      description: Return the list of currated assays in BioAssay Express
+      externalDocs:
+        url: https://www.bioassayexpress.com/docs/
+        x-description: The BioAssay Express is a web-based tool for annotating bioassay
+          protocols using semantic web terms.
+        x-type: publication
+      operationId: getBAEcurratedAssaysList
+      parameters:
+      - description: Sort order
+        in: query
+        name: anomaly
+        schema:
+          enum:
+          - blank
+          - outschema
+          type: string
+      - description: Sort order
+        in: query
+        name: order
+        schema:
+          enum:
+          - ascending
+          - descending
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssaysList'
+          description: Assay model instance
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: unexpected error
+      summary: Get List of curated BioAssays
+      tags:
+      - Assays
+      x-accessRestriction: limited
+      x-controller-name: Assays
+      x-operation-name: ListCuratedAssays
+  /DescribeSchema:
+    post:
+      description: Return the Schema information
+      operationId: describeBAEschema
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                locator: "12"
+              properties:
+                locator:
+                  type: string
+              required:
+              - locator
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaValues'
+          description: Schema model instances
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: unexpected error
+      summary: Get schema information
+      tags:
+      - Schemas
+      x-accessRestriction: limited
+      x-controller-name: Schemas
+      x-operation-name: DescribeSchema
 components:
   schemas:
     Annotation:
@@ -275,41 +313,15 @@ components:
           items:
             type: number
           type: array
-        uniqueIDList:
-          items:
-            type: string
-          type: array
         curationTime:
           items:
             type: number
           type: array
+        uniqueIDList:
+          items:
+            type: string
+          type: array
       title: AssaysList
-    Terms:
-      properties:
-        terms:
-          items:
-            $ref: '#/components/schemas/Term'
-          type: array
-      title: Terms
-    Term:
-      properties:
-        propURI:
-          type: string
-        propLabel:
-          type: string
-        valueURI:
-          type: string
-        valueLabel:
-          type: string
-        groupNest:
-          items:
-            type: string
-          type: array
-        groupLabel:
-          items:
-            type: string
-          type: array
-      title: Term
     Error:
       properties:
         developerMessage:
@@ -360,16 +372,16 @@ components:
       title: Label
     Property:
       properties:
-        uri:
-          type: string
-        name:
-          type: string
         abbrev:
           type: string
-        inSchema:
-          type: boolean
         inModel:
           type: boolean
+        inSchema:
+          type: boolean
+        name:
+          type: string
+        uri:
+          type: string
       title: Property
     PropertyList:
       properties:
@@ -378,6 +390,64 @@ components:
             $ref: '#/components/schemas/Property'
           type: array
       title: PropertyList
+    Schema:
+      example:
+        name: '100 percent growth inhibition'
+        uri: 'http://www.bioassayontology.org/bao#BAO_0001108'
+        abbrev: bao:BAO_0001108'
+        descr: ''
+        inSchema: true
+        isExplicit: false
+        hasModel: false
+      properties:
+        name:
+          type: string
+        uri:
+          type: string
+        abbrev:
+          type: string
+        descr:
+          type: string
+        inSchema:
+          type: boolean
+        isExplicit:
+          type: boolean
+        hasModel:
+          type: boolean
+      title: Schema
+    SchemaValues:
+      properties:
+        values:
+          items:
+            $ref: '#/components/schemas/Schema'
+          type: array
+      title: SchemaValues
+    Term:
+      properties:
+        groupLabel:
+          items:
+            type: string
+          type: array
+        groupNest:
+          items:
+            type: string
+          type: array
+        propLabel:
+          type: string
+        propURI:
+          type: string
+        valueLabel:
+          type: string
+        valueURI:
+          type: string
+      title: Term
+    Terms:
+      properties:
+        terms:
+          items:
+            $ref: '#/components/schemas/Term'
+          type: array
+      title: Terms
     pubchemXRef:
       properties:
         comment:
