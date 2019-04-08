@@ -8,7 +8,7 @@ info:
     x-role: responsible organization
   termsOfService: https://www.bioassayexpress.com/docs/license.jsp
   title: CDD BioAssay Express
-  version: 1.0.3
+  version: 1.0.4
 servers:
 - description: BioExpress server
   url: https://www.bioassayexpress.com/REST/
@@ -380,6 +380,60 @@ components:
         valueLabel:
           type: string
       title: Label
+    PrefixMap:
+      example:
+        'az:': 'http://rdf.astrazeneca.com/bae#'
+        'uo:': 'http://purl.org/obo/owl/UO#'
+        'owl:': 'http://www.w3.org/2002/07/owl#'
+        'src:': 'http://www.bioassayexpress.org/sources#'
+        'bao:': 'http://www.bioassayontology.org/bao#'
+        'bas:': 'http://www.bioassayontology.org/bas#'
+        'xsd:': 'http://www.w3.org/2001/XMLSchema#'
+        'bat:': 'http://www.bioassayontology.org/bat#'
+        'obo:': 'http://purl.obolibrary.org/obo/'
+        'rdfs:': 'http://www.w3.org/2000/01/rdf-schema#'
+        'prov:': 'http://www.w3.org/ns/prov#'
+        'taxon:': 'http://www.bioassayontology.org/taxon#'
+        'protein:': 'http://www.bioassayontology.org/protein#'
+        'geneid:': 'http://www.bioassayontology.org/geneid#'
+        'rdf:': 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
+        'dto:': 'http://www.drugtargetontology.org/dto/'
+        'bae:': 'http://www.bioassayexpress.org/bae#'
+      properties:
+       'az:':
+         type: string
+       'uo:': 
+         type: string
+       'owl:': 
+         type: string
+       'src:': 
+         type: string
+       'bao:': 
+         type: string
+       'bas:': 
+         type: string
+       'xsd:': 
+         type: string
+       'bat:': 
+         type: string
+       'obo:': 
+         type: string
+       'rdfs:': 
+         type: string
+       'prov:': 
+         type: string
+       'taxon:': 
+         type: string
+       'protein:': 
+         type: string
+       'geneid:': 
+         type: string
+       'rdf:': 
+         type: string
+       'dto:': 
+         type: string
+       'bae:': 
+         type: string
     Property:
       properties:
         abbrev:
@@ -436,6 +490,40 @@ components:
               items:
                 type: string
               type: array
+            abbrev:
+              items:
+                type: string
+              type: array
+            inSchema:
+              items:
+                type: boolean
+              type: array
+            schemaCount:
+              items:
+                type: number
+              type: array
+            childCount:
+              items:
+                type: number
+              type: array
+            inModel:
+              items:
+                type: boolean
+              type: array
+            altLabels:
+              items:
+                type: string
+              type: array
+            externalURLs:
+              items:
+                type: string
+              type: array
+            containers:
+              items:
+                type: number
+              type: array
+            prefixMap:
+                $ref: '#/components/schemas/PrefixMap'
       title: PropertyTree
     Schema:
       example:
