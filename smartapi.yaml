@@ -3,15 +3,15 @@ info:
   contact:
     email: support@collaborativedrug.com
     name: BioAssay Express
-    url: https://fair.bioassayexpress.com
+    url: https://www.bioassayexpress.com
     x-id: https://www.collaborativedrug.com/
     x-role: responsible organization
-  termsOfService: https://fair.bioassayexpress.com/docs/license.jsp
+  termsOfService: https://www.bioassayexpress.com/docs/license.jsp
   title: CDD BioAssay Express
-  version: 1.0.5
+  version: 1.0.6
 servers:
 - description: BioExpress server
-  url: https://fair.bioassayexpress.com/REST/
+  url: https://www.bioassayexpress.com/REST/
   x-location: Burlingame, California, USA
   x-maturity: production
 paths:
@@ -118,6 +118,31 @@ paths:
       x-accessRestriction: limited
       x-controller-name: Terms
       x-operation-name: GetPropertyTree
+  /SelectionTree:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SchemaURI'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/SelectionTree'
+                type: array
+          description: Term model instances
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: unexpected error
+      tags:
+      - Terms
+      summary: Get selection tree
   /KeywordMatch:
     post:
       description: Return assay terms matched by keywords
@@ -647,6 +672,40 @@ components:
             prefixMap:
                 $ref: '#/components/schemas/PrefixMap'
       title: PropertyTree
+    PropertyURI:
+      properties:
+        propURI:
+          type: string
+        keywordSelector:
+          type: string
+        valueURIList:
+          items:
+            type: string
+          type: array
+        groupNest:
+          items:
+            type: string
+          type: array
+      title: PropertyURI
+    SelectionTree:
+      properties:
+        treeList:
+          items:
+            type: number
+          type: array
+        literalList:
+          items:
+            type: string
+          type: array
+        matchesAssayID:
+          items:
+            type: number
+          type: array
+        matchesUniqueID:
+          items:
+            type: number
+          type: array
+      title: SelectionTree
     Schema:
       example:
         name: '100 percent growth inhibition'
@@ -672,6 +731,18 @@ components:
         hasModel:
           type: boolean
       title: Schema
+    SchemaURI:
+      example:
+        schemaURI: 'http://www.bioassayontology.org/bao#BAO_0001108'
+        select: [{propURI: 'KEYWORD', keywordSelector: 'enzyme'}]
+      properties:
+        schemaURI:
+         type: string
+        select:
+          items:
+            $ref: '#/components/schemas/PropertyURI'
+          type: array
+      title: SchemaURI
     SchemaValues:
       properties:
         values:
