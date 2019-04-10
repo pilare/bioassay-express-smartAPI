@@ -8,7 +8,7 @@ info:
     x-role: responsible organization
   termsOfService: https://www.bioassayexpress.com/docs/license.jsp
   title: CDD BioAssay Express
-  version: 1.0.6
+  version: 1.0.7
 servers:
 - description: BioExpress server
   url: https://www.bioassayexpress.com/REST/
@@ -25,7 +25,7 @@ paths:
         x-type: publication
       operationId: getBAEassay
       parameters:
-      - description: 'Assay Identifier. Example: 101'
+      - description: 'Assay Identifier'
         in: query
         name: assayID
         required: true
@@ -192,7 +192,7 @@ paths:
       x-operation-name: KeywordMatch
   /ListCuratedAssays:
     get:
-      description: Return the list of currated assays in BioAssay Express
+      description: Return a list of currated assays in BioAssay Express
       externalDocs:
         url: https://www.bioassayexpress.com/docs/
         x-description: The BioAssay Express is a web-based tool for annotating bioassay
@@ -229,7 +229,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: unexpected error
-      summary: Get List of curated BioAssays
+      summary: Get a list of curated BioAssays
       tags:
       - Assays
       x-accessRestriction: limited
@@ -264,6 +264,35 @@ paths:
       x-accessRestriction: limited
       x-controller-name: Compounds
       x-operation-name: ListCompounds
+  /ListQueryAssays:
+    post:
+      description: Returns list of assays that match the query
+      operationId: postBEAlistQueryAssays
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssayQuery'
+        description: A JSON object containing list of assay IDs
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssayIDList'
+          description: Assay IDs
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: unexpected error
+      summary: Get list of matching assay
+      tags:
+      - Assays
+      x-accessRestriction: limited
+      x-controller-name: Assays
+      x-operation-name: ListQueryAssays
   /DescribeSchema:
     post:
       description: Return the Schema information
@@ -411,6 +440,12 @@ components:
         threshold:
           type: number
       title: AssayReference
+    AssayQuery:
+      example:
+        query: '(propURI=bao:BAO_00012345)'
+      properties:
+        query:
+          type: string
     CompoundList:
       example:
         compoundIDList: [1, 2, 3, 4, 5, 6]
