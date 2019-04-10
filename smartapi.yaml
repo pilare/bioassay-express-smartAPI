@@ -3,15 +3,15 @@ info:
   contact:
     email: support@collaborativedrug.com
     name: BioAssay Express
-    url: https://www.bioassayexpress.com
+    url: https://fair.bioassayexpress.com
     x-id: https://www.collaborativedrug.com/
     x-role: responsible organization
-  termsOfService: https://www.bioassayexpress.com/docs/license.jsp
+  termsOfService: https://fair.bioassayexpress.com/docs/license.jsp
   title: CDD BioAssay Express
-  version: 1.0.4
+  version: 1.0.5
 servers:
 - description: BioExpress server
-  url: https://www.bioassayexpress.com/REST/
+  url: https://fair.bioassayexpress.com/REST/
   x-location: Burlingame, California, USA
   x-maturity: production
 paths:
@@ -210,6 +210,35 @@ paths:
       x-accessRestriction: limited
       x-controller-name: Assays
       x-operation-name: ListCuratedAssays
+  /ListCompounds:
+    post:
+      description: Returns list of compound IDs belonging to assays
+      operationId: postBEAlistCompounds
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssayIDList'
+        description: A JSON object containing list of assay IDs
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompoundList'
+          description: Term model instances
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: unexpected error
+      summary: Get ontology properties list
+      tags:
+      - Compounds
+      x-accessRestriction: limited
+      x-controller-name: Compounds
+      x-operation-name: ListCompounds
   /DescribeSchema:
     post:
       description: Return the Schema information
@@ -332,6 +361,99 @@ components:
             type: string
           type: array
       title: AssaysList
+    AssayIDList:
+      example:
+        assayIDList: [1, 2, 3, 4]
+      properties:
+        assayIDlist:
+          items:
+            type: number
+          type: array
+      title: AssayIDList
+    AssayReference:
+      example:
+        assayID: 1
+        operator: "<"
+        field: "EC50"
+        threshold: 5
+      properties:
+        assayID:
+          type: number
+        operator:
+          type: string
+        field:
+          type: string
+        threshold:
+          type: number
+      title: AssayReference
+    CompoundList:
+      example:
+        compoundIDList: [1, 2, 3, 4, 5, 6]
+        hashECFP6List: [1854422136, 1863941460, 638742098, 454877582, -25563370, -2002476729]
+        assays:
+          - assayID: 1
+            operator: "<"
+            field: "EC50"
+            threshold: 5
+        columns:
+          - assayID: 1
+            name: "Active/Inactive"
+            units: "binary"
+            type: "activity"
+        measureIndex: [0, 0, 0, 0, 0, 0]
+        measureCompound: [62582, 172500, 154584, 30669, 54928, 126160]
+        measureValue: [1, 1, 0, 1, 0, 0]
+        measureRelation: ["=", "=", "=", "=", "=", "="]
+      properties:
+        compoundIDList:
+          items:
+            type: number
+          type: array
+        hashECFP6List:
+          items:
+            type: number
+          type: array
+        assays:
+          items:
+            $ref: '#/components/schemas/AssayReference'
+          type: array
+        columns:
+          items:
+            $ref: '#/components/schemas/Column'
+          type: array
+        measureIndex:
+          items:
+            type: number
+          type: array
+        measureCompound:
+          items:
+            type: number
+          type: array
+        measureValue:
+          items:
+            type: number
+          type: array
+        measureRelation:
+          items:
+            type: string
+          type: array
+      title: CompoundList
+    Column:
+      example:
+        assayID: 1
+        name: "Active/Inactive"
+        units: "binary"
+        type: "activity"
+      properties:
+        assayID:
+          type: number
+        name:
+          type: string
+        units:
+          type: string
+        type:
+          type: string
+      title: Column
     Error:
       properties:
         developerMessage:
