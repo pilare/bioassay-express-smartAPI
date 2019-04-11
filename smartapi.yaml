@@ -3,18 +3,50 @@ info:
   contact:
     email: support@collaborativedrug.com
     name: BioAssay Express
-    url: https://www.bioassayexpress.com
+    url: https://fair.bioassayexpress.com
     x-id: https://www.collaborativedrug.com/
     x-role: responsible organization
-  termsOfService: https://www.bioassayexpress.com/docs/license.jsp
+  termsOfService: https://fair.bioassayexpress.com/docs/license.jsp
   title: CDD BioAssay Express
-  version: 1.0.7
+  version: 1.0.8
 servers:
 - description: BioExpress server
-  url: https://www.bioassayexpress.com/REST/
+  url: https://fair.bioassayexpress.com/REST/
   x-location: Burlingame, California, USA
   x-maturity: production
 paths:
+  /DescribeSchema:
+    post:
+      description: Return the Schema information
+      operationId: describeBAEschema
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                locator: '12'
+              properties:
+                locator:
+                  type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaValues'
+          description: Schema model instances
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: unexpected error
+      summary: Get schema information
+      tags:
+      - Schemas
+      x-accessRestriction: limited
+      x-controller-name: Schemas
+      x-operation-name: DescribeSchema
   /GetAssay:
     get:
       description: Return BioAssay information with full annotation
@@ -25,7 +57,7 @@ paths:
         x-type: publication
       operationId: getBAEassay
       parameters:
-      - description: 'Assay Identifier'
+      - description: Assay Identifier
         in: query
         name: assayID
         required: true
@@ -118,31 +150,6 @@ paths:
       x-accessRestriction: limited
       x-controller-name: Terms
       x-operation-name: GetPropertyTree
-  /SelectionTree:
-    post:
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SchemaURI'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                items:
-                  $ref: '#/components/schemas/SelectionTree'
-                type: array
-          description: Term model instances
-        default:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: unexpected error
-      tags:
-      - Terms
-      summary: Get selection tree
   /KeywordMatch:
     post:
       description: Return assay terms matched by keywords
@@ -190,6 +197,35 @@ paths:
       x-accessRestriction: limited
       x-controller-name: Terms
       x-operation-name: KeywordMatch
+  /ListCompounds:
+    post:
+      description: Returns list of compound IDs belonging to assays
+      operationId: postBEAlistCompounds
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssayIDList'
+        description: A JSON object containing list of assay IDs
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompoundList'
+          description: Term model instances
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: unexpected error
+      summary: Get ontology properties list
+      tags:
+      - Compounds
+      x-accessRestriction: limited
+      x-controller-name: Compounds
+      x-operation-name: ListCompounds
   /ListCuratedAssays:
     get:
       description: Return a list of currated assays in BioAssay Express
@@ -235,35 +271,6 @@ paths:
       x-accessRestriction: limited
       x-controller-name: Assays
       x-operation-name: ListCuratedAssays
-  /ListCompounds:
-    post:
-      description: Returns list of compound IDs belonging to assays
-      operationId: postBEAlistCompounds
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AssayIDList'
-        description: A JSON object containing list of assay IDs
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CompoundList'
-          description: Term model instances
-        default:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: unexpected error
-      summary: Get ontology properties list
-      tags:
-      - Compounds
-      x-accessRestriction: limited
-      x-controller-name: Compounds
-      x-operation-name: ListCompounds
   /ListQueryAssays:
     post:
       description: Returns list of assays that match the query
@@ -293,38 +300,31 @@ paths:
       x-accessRestriction: limited
       x-controller-name: Assays
       x-operation-name: ListQueryAssays
-  /DescribeSchema:
+  /SelectionTree:
     post:
-      description: Return the Schema information
-      operationId: describeBAEschema
       requestBody:
         content:
           application/json:
             schema:
-              example:
-                locator: "12"
-              properties:
-                locator:
-                  type: string
+              $ref: '#/components/schemas/SchemaURI'
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SchemaValues'
-          description: Schema model instances
+                items:
+                  $ref: '#/components/schemas/SelectionTree'
+                type: array
+          description: Term model instances
         default:
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
           description: unexpected error
-      summary: Get schema information
+      summary: Get selection tree
       tags:
-      - Schemas
-      x-accessRestriction: limited
-      x-controller-name: Schemas
-      x-operation-name: DescribeSchema
+      - Terms
 components:
   schemas:
     Annotation:
@@ -400,6 +400,41 @@ components:
       required:
       - assayID
       title: Assay
+    AssayIDList:
+      example:
+        assayIDList:
+        - 1
+        - 2
+        - 3
+        - 4
+      properties:
+        assayIDlist:
+          items:
+            type: number
+          type: array
+      title: AssayIDList
+    AssayQuery:
+      example:
+        query: (propURI=bao:BAO_00012345)
+      properties:
+        query:
+          type: string
+    AssayReference:
+      example:
+        assayID: 1
+        field: EC50
+        operator: <
+        threshold: 5
+      properties:
+        assayID:
+          type: number
+        field:
+          type: string
+        operator:
+          type: string
+        threshold:
+          type: number
+      title: AssayReference
     AssaysList:
       properties:
         assayIDList:
@@ -415,64 +450,77 @@ components:
             type: string
           type: array
       title: AssaysList
-    AssayIDList:
-      example:
-        assayIDList: [1, 2, 3, 4]
-      properties:
-        assayIDlist:
-          items:
-            type: number
-          type: array
-      title: AssayIDList
-    AssayReference:
+    Column:
       example:
         assayID: 1
-        operator: "<"
-        field: "EC50"
-        threshold: 5
+        name: Active/Inactive
+        type: activity
+        units: binary
       properties:
         assayID:
           type: number
-        operator:
+        name:
           type: string
-        field:
+        type:
           type: string
-        threshold:
-          type: number
-      title: AssayReference
-    AssayQuery:
-      example:
-        query: '(propURI=bao:BAO_00012345)'
-      properties:
-        query:
+        units:
           type: string
+      title: Column
     CompoundList:
       example:
-        compoundIDList: [1, 2, 3, 4, 5, 6]
-        hashECFP6List: [1854422136, 1863941460, 638742098, 454877582, -25563370, -2002476729]
         assays:
-          - assayID: 1
-            operator: "<"
-            field: "EC50"
-            threshold: 5
+        - assayID: 1
+          field: EC50
+          operator: <
+          threshold: 5
         columns:
-          - assayID: 1
-            name: "Active/Inactive"
-            units: "binary"
-            type: "activity"
-        measureIndex: [0, 0, 0, 0, 0, 0]
-        measureCompound: [62582, 172500, 154584, 30669, 54928, 126160]
-        measureValue: [1, 1, 0, 1, 0, 0]
-        measureRelation: ["=", "=", "=", "=", "=", "="]
-      properties:
+        - assayID: 1
+          name: Active/Inactive
+          type: activity
+          units: binary
         compoundIDList:
-          items:
-            type: number
-          type: array
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
         hashECFP6List:
-          items:
-            type: number
-          type: array
+        - 1854422136
+        - 1863941460
+        - 638742098
+        - 454877582
+        - -25563370
+        - -2002476729
+        measureCompound:
+        - 62582
+        - 172500
+        - 154584
+        - 30669
+        - 54928
+        - 126160
+        measureIndex:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        measureRelation:
+        - '='
+        - '='
+        - '='
+        - '='
+        - '='
+        - '='
+        measureValue:
+        - 1
+        - 1
+        - 0
+        - 1
+        - 0
+        - 0
+      properties:
         assays:
           items:
             $ref: '#/components/schemas/AssayReference'
@@ -481,7 +529,11 @@ components:
           items:
             $ref: '#/components/schemas/Column'
           type: array
-        measureIndex:
+        compoundIDList:
+          items:
+            type: number
+          type: array
+        hashECFP6List:
           items:
             type: number
           type: array
@@ -489,7 +541,7 @@ components:
           items:
             type: number
           type: array
-        measureValue:
+        measureIndex:
           items:
             type: number
           type: array
@@ -497,23 +549,11 @@ components:
           items:
             type: string
           type: array
+        measureValue:
+          items:
+            type: number
+          type: array
       title: CompoundList
-    Column:
-      example:
-        assayID: 1
-        name: "Active/Inactive"
-        units: "binary"
-        type: "activity"
-      properties:
-        assayID:
-          type: number
-        name:
-          type: string
-        units:
-          type: string
-        type:
-          type: string
-      title: Column
     Error:
       properties:
         developerMessage:
@@ -564,58 +604,58 @@ components:
       title: Label
     PrefixMap:
       example:
-        'az:': 'http://rdf.astrazeneca.com/bae#'
-        'uo:': 'http://purl.org/obo/owl/UO#'
-        'owl:': 'http://www.w3.org/2002/07/owl#'
-        'src:': 'http://www.bioassayexpress.org/sources#'
-        'bao:': 'http://www.bioassayontology.org/bao#'
-        'bas:': 'http://www.bioassayontology.org/bas#'
-        'xsd:': 'http://www.w3.org/2001/XMLSchema#'
-        'bat:': 'http://www.bioassayontology.org/bat#'
-        'obo:': 'http://purl.obolibrary.org/obo/'
-        'rdfs:': 'http://www.w3.org/2000/01/rdf-schema#'
-        'prov:': 'http://www.w3.org/ns/prov#'
-        'taxon:': 'http://www.bioassayontology.org/taxon#'
-        'protein:': 'http://www.bioassayontology.org/protein#'
-        'geneid:': 'http://www.bioassayontology.org/geneid#'
-        'rdf:': 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
-        'dto:': 'http://www.drugtargetontology.org/dto/'
-        'bae:': 'http://www.bioassayexpress.org/bae#'
+        'az:': http://rdf.astrazeneca.com/bae#
+        'bae:': http://www.bioassayexpress.org/bae#
+        'bao:': http://www.bioassayontology.org/bao#
+        'bas:': http://www.bioassayontology.org/bas#
+        'bat:': http://www.bioassayontology.org/bat#
+        'dto:': http://www.drugtargetontology.org/dto/
+        'geneid:': http://www.bioassayontology.org/geneid#
+        'obo:': http://purl.obolibrary.org/obo/
+        'owl:': http://www.w3.org/2002/07/owl#
+        'protein:': http://www.bioassayontology.org/protein#
+        'prov:': http://www.w3.org/ns/prov#
+        'rdf:': http://www.w3.org/1999/02/22-rdf-syntax-ns#
+        'rdfs:': http://www.w3.org/2000/01/rdf-schema#
+        'src:': http://www.bioassayexpress.org/sources#
+        'taxon:': http://www.bioassayontology.org/taxon#
+        'uo:': http://purl.org/obo/owl/UO#
+        'xsd:': http://www.w3.org/2001/XMLSchema#
       properties:
-       'az:':
-         type: string
-       'uo:': 
-         type: string
-       'owl:': 
-         type: string
-       'src:': 
-         type: string
-       'bao:': 
-         type: string
-       'bas:': 
-         type: string
-       'xsd:': 
-         type: string
-       'bat:': 
-         type: string
-       'obo:': 
-         type: string
-       'rdfs:': 
-         type: string
-       'prov:': 
-         type: string
-       'taxon:': 
-         type: string
-       'protein:': 
-         type: string
-       'geneid:': 
-         type: string
-       'rdf:': 
-         type: string
-       'dto:': 
-         type: string
-       'bae:': 
-         type: string
+        'az:':
+          type: string
+        'bae:':
+          type: string
+        'bao:':
+          type: string
+        'bas:':
+          type: string
+        'bat:':
+          type: string
+        'dto:':
+          type: string
+        'geneid:':
+          type: string
+        'obo:':
+          type: string
+        'owl:':
+          type: string
+        'protein:':
+          type: string
+        'prov:':
+          type: string
+        'rdf:':
+          type: string
+        'rdfs:':
+          type: string
+        'src:':
+          type: string
+        'taxon:':
+          type: string
+        'uo:':
+          type: string
+        'xsd:':
+          type: string
     Property:
       properties:
         abbrev:
@@ -658,121 +698,104 @@ components:
     PropertyTree:
       properties:
         tree:
-          type: object
           properties:
-            depth:
-              items:
-                type: number
-              type: array
-            parent:
-              items:
-                type: number
-              type: array
-            name:
-              items:
-                type: string
-              type: array
             abbrev:
               items:
                 type: string
-              type: array
-            inSchema:
-              items:
-                type: boolean
-              type: array
-            schemaCount:
-              items:
-                type: number
-              type: array
-            childCount:
-              items:
-                type: number
-              type: array
-            inModel:
-              items:
-                type: boolean
               type: array
             altLabels:
               items:
                 type: string
               type: array
-            externalURLs:
+            childCount:
               items:
-                type: string
+                type: number
               type: array
             containers:
               items:
                 type: number
               type: array
+            depth:
+              items:
+                type: number
+              type: array
+            externalURLs:
+              items:
+                type: string
+              type: array
+            inModel:
+              items:
+                type: boolean
+              type: array
+            inSchema:
+              items:
+                type: boolean
+              type: array
+            name:
+              items:
+                type: string
+              type: array
+            parent:
+              items:
+                type: number
+              type: array
             prefixMap:
-                $ref: '#/components/schemas/PrefixMap'
+              $ref: '#/components/schemas/PrefixMap'
+            schemaCount:
+              items:
+                type: number
+              type: array
+          type: object
       title: PropertyTree
     PropertyURI:
       properties:
-        propURI:
-          type: string
+        groupNest:
+          items:
+            type: string
+          type: array
         keywordSelector:
+          type: string
+        propURI:
           type: string
         valueURIList:
           items:
             type: string
           type: array
-        groupNest:
-          items:
-            type: string
-          type: array
       title: PropertyURI
-    SelectionTree:
-      properties:
-        treeList:
-          items:
-            type: number
-          type: array
-        literalList:
-          items:
-            type: string
-          type: array
-        matchesAssayID:
-          items:
-            type: number
-          type: array
-        matchesUniqueID:
-          items:
-            type: number
-          type: array
-      title: SelectionTree
     Schema:
       example:
-        name: '100 percent growth inhibition'
-        uri: 'http://www.bioassayontology.org/bao#BAO_0001108'
         abbrev: bao:BAO_0001108'
         descr: ''
+        hasModel: false
         inSchema: true
         isExplicit: false
-        hasModel: false
+        name: 100 percent growth inhibition
+        uri: http://www.bioassayontology.org/bao#BAO_0001108
       properties:
-        name:
-          type: string
-        uri:
-          type: string
         abbrev:
           type: string
         descr:
           type: string
+        hasModel:
+          type: boolean
         inSchema:
           type: boolean
         isExplicit:
           type: boolean
-        hasModel:
-          type: boolean
+        name:
+          type: string
+        uri:
+          type: string
       title: Schema
     SchemaURI:
       example:
-        schemaURI: 'http://www.bioassayontology.org/bao#BAO_0001108'
-        select: [{propURI: 'KEYWORD', keywordSelector: 'enzyme'}]
+        schemaURI: http://www.bioassayontology.org/bao#BAO_0001108
+        select:
+        - keywordSelector: enzyme
+          propURI: KEYWORD
       properties:
         schemaURI:
-         type: string
+          type: string
         select:
           items:
             $ref: '#/components/schemas/PropertyURI'
@@ -785,6 +808,25 @@ components:
             $ref: '#/components/schemas/Schema'
           type: array
       title: SchemaValues
+    SelectionTree:
+      properties:
+        literalList:
+          items:
+            type: string
+          type: array
+        matchesAssayID:
+          items:
+            type: number
+          type: array
+        matchesUniqueID:
+          items:
+            type: number
+          type: array
+        treeList:
+          items:
+            type: number
+          type: array
+      title: SelectionTree
     Term:
       properties:
         groupLabel:
