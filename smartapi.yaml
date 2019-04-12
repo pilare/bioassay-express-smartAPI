@@ -8,7 +8,7 @@ info:
     x-role: responsible organization
   termsOfService: https://fair.bioassayexpress.com/docs/license.jsp
   title: CDD BioAssay Express
-  version: 1.0.9
+  version: 1.0.10
 servers:
 - description: BioExpress server
   url: https://fair.bioassayexpress.com/REST/
@@ -62,7 +62,7 @@ paths:
         name: assayID
         required: true
         schema:
-          example: 101
+          example: 1
           type: number
         x-parameterValueType:
           x-parameterType: bae.id
@@ -161,7 +161,6 @@ paths:
               example:
                 annotations: []
                 keywords: enzyme
-                schemaURI: http://www.bioassayontology.org/bas#
                 select: null
               properties:
                 annotations:
@@ -415,7 +414,7 @@ components:
       title: AssayIDList
     AssayQuery:
       example:
-        query: (propURI=bao:BAO_00012345)
+        query: (propURI=bao:BAO_0002921)
       properties:
         query:
           type: string
@@ -679,9 +678,8 @@ components:
     PropertyQuery:
       example:
         groupNest: []
-        propURI: http://www.bioassayontology.org/bao#BAO_0002854
+        propURI: http://www.bioassayontology.org/bao#BAO_0002921
         schemaBranches: null
-        schemaURI: http://www.bioassayontology.org/bas#
       properties:
         groupNest:
           items:
