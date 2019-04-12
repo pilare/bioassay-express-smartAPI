@@ -8,7 +8,7 @@ info:
     x-role: responsible organization
   termsOfService: https://fair.bioassayexpress.com/docs/license.jsp
   title: CDD BioAssay Express
-  version: 1.0.8
+  version: 1.0.9
 servers:
 - description: BioExpress server
   url: https://fair.bioassayexpress.com/REST/
@@ -24,7 +24,7 @@ paths:
           application/json:
             schema:
               example:
-                locator: '12'
+                {}
               properties:
                 locator:
                   type: string
