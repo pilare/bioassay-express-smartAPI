@@ -8,7 +8,7 @@ info:
     x-role: responsible organization
   termsOfService: https://fair.bioassayexpress.com/docs/license.jsp
   title: CDD BioAssay Express
-  version: 1.0.10
+  version: 1.0.11
 servers:
 - description: BioExpress server
   url: https://fair.bioassayexpress.com/REST/
@@ -299,6 +299,41 @@ paths:
       x-accessRestriction: limited
       x-controller-name: Assays
       x-operation-name: ListQueryAssays
+  /Search:
+    get:
+      description: Return Assays based on search criteria
+      operationId: getBAEsearch
+      parameters:
+      - description: List of assay Ids
+        in: query
+        name: assayIDList
+        schema:
+          $ref: '#/components/schemas/AssayIDList'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Assay'
+          description: Assay model instance
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unable to find assayID
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: unexpected error
+      summary: Get BioAssay information
+      tags:
+      - Assays
+      x-accessRestriction: limited
+      x-controller-name: Assays
+      x-operation-name: Search
   /SelectionTree:
     post:
       requestBody:
