@@ -8,7 +8,7 @@ info:
     x-role: responsible organization
   termsOfService: https://fair.bioassayexpress.com/docs/license.jsp
   title: CDD BioAssay Express
-  version: 1.0.11
+  version: 1.0.12
 servers:
 - description: BioExpress server
   url: https://fair.bioassayexpress.com/REST/
@@ -343,13 +343,17 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SearchQuery'
+              oneOf:
+                - $ref: '#/components/schemas/SearchQuery'
+                - $ref: '#/components/schemas/Any'
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SearchResults'
+                oneOf:
+                  - $ref: '#/components/schemas/SearchResults'
+                  - $ref: '#/components/schemas/AssayIDList'
           description: Found assay model instances
         default:
           content:
@@ -357,7 +361,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: unexpected error
-      summary: Get BioAssay information
+      summary: Get matching assays information
       tags:
       - Assays
       x-accessRestriction: limited
@@ -390,6 +394,8 @@ paths:
       - Terms
 components:
   schemas:
+    Any:
+      properties: {}
     Annotation:
       properties:
         groupLabel:
