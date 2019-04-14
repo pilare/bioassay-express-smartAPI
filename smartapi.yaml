@@ -8,7 +8,7 @@ info:
     x-role: responsible organization
   termsOfService: https://fair.bioassayexpress.com/docs/license.jsp
   title: CDD BioAssay Express
-  version: 1.0.12
+  version: 1.0.13
 servers:
 - description: BioExpress server
   url: https://fair.bioassayexpress.com/REST/
@@ -343,17 +343,13 @@ paths:
         content:
           application/json:
             schema:
-              oneOf:
-                - $ref: '#/components/schemas/SearchQuery'
-                - $ref: '#/components/schemas/Any'
+              $ref: '#/components/schemas/SearchQuery'
       responses:
         '200':
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/SearchResults'
-                  - $ref: '#/components/schemas/AssayIDList'
+                $ref: '#/components/schemas/SearchResults'
           description: Found assay model instances
         default:
           content:
@@ -392,10 +388,33 @@ paths:
       summary: Get selection tree
       tags:
       - Terms
+  /SummariseAnnotations:
+    get:
+      description: Return BEA currated assays
+      operationId: getBAESummariseAnnotations
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssaySummary'
+          description: Summarized Assay Annotations
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: unexpected error
+      summary: Get summary of assay annotations
+      tags:
+      - Assays
+      x-accessRestriction: limited
+      x-controller-name: Assays
+      x-operation-name: SummariseAnnotations
 components:
   schemas:
     Any:
-      properties: {}
+      {}
     Annotation:
       properties:
         groupLabel:
@@ -516,6 +535,13 @@ components:
             type: string
           type: array
       title: AssaysList
+    AssaySummary:
+      example:
+        propCounts:
+          ["http://www.bioassayexpress.org/bae#FAIR_0000059": [1,1],"http://www.bioassayexpress.org/bae#FAIR_0000058": [1,1],"http://www.bioassayexpress.org/bae#FAIR_0000109": { "http://www.bioassayexpress.com/bao_provisional#FAIR_0000101": [1,1]}]
+      properties:
+        propCounts:
+          $ref: '#/components/schemas/Any'
     Column:
       example:
         assayID: 1
