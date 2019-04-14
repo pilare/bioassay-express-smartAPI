@@ -14,6 +14,17 @@ servers:
   url: https://fair.bioassayexpress.com/REST/
   x-location: Burlingame, California, USA
   x-maturity: production
+tags:
+  - name: Assays
+    description: Query and retrieve assays currated in BEA
+    externalDocs:
+      url: https://fair.bioassayexpress.com/docs/
+  - name: Schemas
+    description: Browse schemas defined in BEA
+  - name: Terms
+    description: Browse ontology ralated terms
+  - name: Compounds
+    description: Retrieve information on compounds related to assays
 paths:
   /DescribeSchema:
     post:
@@ -23,8 +34,7 @@ paths:
         content:
           application/json:
             schema:
-              example:
-                {}
+              example: {}
               properties:
                 locator:
                   type: string
@@ -60,13 +70,17 @@ paths:
       - description: Assay Identifier
         in: query
         name: assayID
-        required: true
         schema:
-          example: 1
+          example: 37
           type: number
         x-parameterValueType:
           x-parameterType: bae.id
-          x-valueType: http://identifiers.org/bioassay.bae
+      - description: Assay uniqueID
+        in: query
+        name: uniqueID
+        schema:
+          example: pubmedCentral:4741300
+          type: string
       responses:
         '200':
           content:
@@ -301,27 +315,42 @@ paths:
       x-operation-name: ListQueryAssays
   /Search:
     get:
-      description: Return Assays based on search criteria
+      description: Return BEA currated assays
       operationId: getBAEsearch
-      parameters:
-      - description: List of assay Ids
-        in: query
-        name: assayIDList
-        schema:
-          $ref: '#/components/schemas/AssayIDList'
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Assay'
-          description: Assay model instance
-        '400':
+                $ref: '#/components/schemas/AssayIDList'
+          description: Assay model ID list
+        default:
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-          description: Unable to find assayID
+          description: unexpected error
+      summary: Get BEA BioAssay list
+      tags:
+      - Assays
+      x-accessRestriction: limited
+      x-controller-name: Assays
+      x-operation-name: SearchGet
+    post:
+      description: Return Assays based on search criteria
+      operationId: postBAEsearch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchQuery'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResults'
+          description: Found assay model instances
         default:
           content:
             application/json:
@@ -333,7 +362,7 @@ paths:
       - Assays
       x-accessRestriction: limited
       x-controller-name: Assays
-      x-operation-name: Search
+      x-operation-name: SearchPost
   /SelectionTree:
     post:
       requestBody:
@@ -404,9 +433,6 @@ components:
           type: array
         assayID:
           type: number
-          x-responseValueType:
-            x-path: ncbigene.id
-            x-valueType: http://identifiers.org/ncbigene
         curationTime:
           type: number
         curatorID:
@@ -795,6 +821,57 @@ components:
             type: string
           type: array
       title: PropertyURI
+    SearchQuery:
+      example:
+        assayIDList: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 10, 20, 21, 22, 23, 24, 25, 26, 27, 28]
+        countCompounds: true
+        search: [{groupLabel: ["result definitions"],groupNest: ["http://www.bioassayexpress.org/bae#FAIR_0000048"],propDescr: "Qualitative data description",propURI: "http://www.bioassayexpress.org/bae#FAIR_0000079", propLabel: "qualitative data",valueLabel: "unknown",valueURI: "http://www.bioassayontology.org/bat#Unknown"}]
+        threshold: 0
+        translitPreviews: true
+      properties:
+        assayIDList:
+          $ref: '#/components/schemas/AssayIDList'
+        countCompounds:
+          type: boolean
+        search:
+          items:
+            $ref: '#/components/schemas/SearchItem'
+        threshold:
+          type: number
+        translitPreviews:
+          type: boolean
+      required:
+      - propURI
+    SearchItem:
+      properties:
+        altLabels:
+          items:
+            type: string
+          type: array
+        groupLabel:
+          items:
+            type: string
+          type: array
+        groupNest:
+          items:
+            type: string
+          type: array
+        propDescr:
+          type: string
+        propLabel:
+          type: string
+        propURI:
+          type: string
+        valueLabel:
+          type: string
+        valueURI:
+          type: string
+    SearchResults:
+      properties:
+        results:
+          items:
+            $ref: '#/components/schemas/Assay'
+          type: array
     Schema:
       example:
         abbrev: bao:BAO_0001108'
